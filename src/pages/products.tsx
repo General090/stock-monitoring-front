@@ -1,87 +1,186 @@
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import api from "../services/api";
 import AdminLayout from "../components/AdminLayout";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
-type Product = {
-  _id?: string;
+interface Product {
+  _id: string;
   name: string;
   quantity: number;
-  unitPrice: number;
-};
+  price: number;
+}
 
-export default function Products() {
+export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
-  const { register, handleSubmit, reset, setValue } = useForm<Product>();
+  const [form, setForm] = useState({ name: "", quantity: 0, price: 0 });
+  const [editId, setEditId] = useState<string | null>(null);
 
-  const fetchProducts = async () => {
-    const res = await api.get("/products");
-    setProducts(res.data);
-  };
-
+  // Load products
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  const onSubmit = async (data: Product) => {
-    if (data._id) {
-      await api.put(`/products/${data._id}`, data);
-    } else {
-      await api.post("/products", data);
+  async function fetchProducts() {
+    try {
+      const res = await api.get("/products");
+      setProducts(res.data);
+    } catch (error) {
+      console.error("Failed to load products", error);
     }
-    fetchProducts();
-    reset();
-  };
+  }
 
-  const handleEdit = (product: Product) => {
-    setValue("_id", product._id || "");
-    setValue("name", product.name);
-    setValue("quantity", product.quantity);
-    setValue("unitPrice", product.unitPrice);
-  };
+  // Handle form change
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
 
-  const handleDelete = async (id: string) => {
-    await api.delete(`/products/${id}`);
-    fetchProducts();
-  };
+  // Add or update product
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    try {
+      if (editId) {
+        // Update
+        await api.put(`/auth/products/${editId}`, {
+          ...form,
+          quantity: Number(form.quantity),
+          price: Number(form.price),
+        });
+        setEditId(null);
+      } else {
+        // Add
+        await api.post("/products", {
+          ...form,
+          quantity: Number(form.quantity),
+          price: Number(form.price),
+        });
+      }
+
+      setForm({ name: "", quantity: 0, price: 0 });
+      fetchProducts();
+    } catch (error) {
+      console.error("Failed to save product", error);
+    }
+  }
+
+  // Delete product
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      await api.delete(`/products/${id}`);
+      fetchProducts();
+    } catch (error) {
+      console.error("Failed to delete product", error);
+    }
+  }
+
+  // Start editing a product
+  function startEdit(product: Product) {
+    setEditId(product._id);
+    setForm({
+      name: product.name,
+      quantity: product.quantity,
+      price: product.price,
+    });
+  }
 
   return (
     <AdminLayout>
-      <h2 className="text-xl font-bold mb-4">Product Inventory</h2>
+      <div className="p-6">
+        <h1 className="text-2xl font-bold mb-6">Product Management</h1>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 mb-6">
-        <input {...register("_id")} type="hidden" />
-        <input {...register("name")} placeholder="Name" className="border p-2 block" />
-        <input {...register("quantity")} type="number" placeholder="Quantity" className="border p-2 block" />
-        <input {...register("unitPrice")} type="number" placeholder="Unit Price" className="border p-2 block" />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2">Save Product</button>
-      </form>
+        <form onSubmit={handleSubmit} className="mb-6 space-y-4 max-w-md">
+          <input
+            name="name"
+            type="text"
+            placeholder="Product Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="input input-bordered w-full"
+          />
+          <input
+            name="quantity"
+            type="number"
+            placeholder="Quantity"
+            value={form.quantity}
+            onChange={handleChange}
+            min={0}
+            required
+            className="input input-bordered w-full"
+          />
+          <input
+            name="price"
+            type="number"
+            placeholder="Price"
+            value={form.price}
+            onChange={handleChange}
+            min={0}
+            step="0.01"
+            required
+            className="input input-bordered w-full"
+          />
+          <button
+            type="submit"
+            className="btn btn-primary bg-blue-500 py-3 px-5 cursor-pointer"
+          >
+            {editId ? "Update Product" : "Add Product"}
+          </button>
+          {editId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditId(null);
+                setForm({ name: "", quantity: 0, price: 0 });
+              }}
+              className="btn btn-secondary ml-2"
+            >
+              Cancel
+            </button>
+          )}
+        </form>
 
-      {/* Table */}
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100">
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((prod) => (
-            <tr key={prod._id} className="border-t">
-              <td>{prod.name}</td>
-              <td>{prod.quantity}</td>
-              <td>${prod.unitPrice}</td>
-              <td>
-                <button onClick={() => handleEdit(prod)} className="text-blue-500 mr-2">Edit</button>
-                <button onClick={() => handleDelete(prod._id!)} className="text-red-500">Delete</button>
-              </td>
+        <table className="table-auto w-full border-collapse border border-gray-300">
+          <thead>
+            <tr>
+              <th className="border border-gray-300 p-2">Name</th>
+              <th className="border border-gray-300 p-2">Quantity</th>
+              <th className="border border-gray-300 p-2">Price</th>
+              <th className="border border-gray-300 p-2">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.length === 0 && (
+              <tr>
+                <td colSpan={4} className="text-center p-4">
+                  No products found.
+                </td>
+              </tr>
+            )}
+            {products.map((product) => (
+              <tr key={product._id}>
+                <td className="border border-gray-300 p-2">{product.name}</td>
+                <td className="border border-gray-300 p-2">{product.quantity}</td>
+                <td className="border border-gray-300 p-2">${product.price.toFixed(2)}</td>
+                <td className="border border-gray-300 p-2 space-x-2">
+                  <button
+                    onClick={() => startEdit(product)}
+                    className="btn btn-sm btn-warning"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(product._id)}
+                    className="btn btn-sm btn-error"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </AdminLayout>
   );
 }
