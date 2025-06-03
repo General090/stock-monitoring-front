@@ -16,10 +16,10 @@ export default function Login() {
     try {
       const res = await api.post("/auth/login", data);
       localStorage.setItem("token", res.data.token);
-      toast.success("Logged in!");
+      toast.success("Logged in");
       navigate("/dashboard");
     } catch (error) {
-      toast.error("Login failed!");
+      toast.error("Login failed");
     }
   };
 

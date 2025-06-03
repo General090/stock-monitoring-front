@@ -16,6 +16,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <nav className="space-y-2">
           <Link to="/dashboard" className="block hover:underline">Dashboard</Link>
           <Link to="/products" className="block hover:underline">Products</Link>
+          <Link to="/low-stock" className="block py-2 hover:underline">Low Stock</Link>
           <Link to="/receipts" className="block hover:underline">Receipts</Link>
           <button onClick={handleLogout} className="block text-red-400 hover:underline mt-4">Logout</button>
         </nav>

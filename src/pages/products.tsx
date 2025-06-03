@@ -90,20 +90,20 @@ export default function ProductManagement() {
         <h1 className="text-2xl font-bold mb-6">Product Management</h1>
 
         <form onSubmit={handleSubmit} className="mb-6 space-y-4 max-w-md">
-          <input
-            name="name"
-            type="text"
-            placeholder="Product Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="input input-bordered w-full"
-          />
+            <input
+              name="name"
+              type="text"
+              placeholder="Product Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="input input-bordered w-full"
+            />
+
           <input
             name="quantity"
             type="number"
             placeholder="Quantity"
-            value={form.quantity}
             onChange={handleChange}
             min={0}
             required
@@ -113,10 +113,9 @@ export default function ProductManagement() {
             name="price"
             type="number"
             placeholder="Price"
-            value={form.price}
             onChange={handleChange}
             min={0}
-            step="0.01"
+            step="1"
             required
             className="input input-bordered w-full"
           />
@@ -158,23 +157,16 @@ export default function ProductManagement() {
               </tr>
             )}
             {products.map((product) => (
-              <tr key={product._id}>
+              <tr
+                key={product._id}
+                className={product.quantity < 5 ? "bg-red-50" : ""}
+              >
                 <td className="border border-gray-300 p-2">{product.name}</td>
                 <td className="border border-gray-300 p-2">{product.quantity}</td>
-                <td className="border border-gray-300 p-2">${product.price.toFixed(2)}</td>
+                <td className="border border-gray-300 p-2">₦{product.price.toFixed(2)}</td>
                 <td className="border border-gray-300 p-2 space-x-2">
-                  <button
-                    onClick={() => startEdit(product)}
-                    className="btn btn-sm btn-warning"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(product._id)}
-                    className="btn btn-sm btn-error"
-                  >
-                    Delete
-                  </button>
+                  <button onClick={() => startEdit(product)} className="btn btn-sm btn-warning">Edit</button>
+                  <button onClick={() => handleDelete(product._id)} className="btn btn-sm btn-error">Delete</button>
                 </td>
               </tr>
             ))}

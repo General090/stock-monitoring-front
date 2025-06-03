@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/register";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/products";
+import LowStockPage from "./pages/LowStockPage";
 import Receipts from "./pages/reciepts";
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/low-stock" element={<LowStockPage />} />
         <Route path="/receipts" element={<Receipts />} />
       </Routes>
     </Router>
