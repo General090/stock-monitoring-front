@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 type RegisterData = {
-  name: string;  
+  name: string;
   email: string;
   password: string;
 };
@@ -16,7 +16,7 @@ export default function Register() {
   const onSubmit = async (data: RegisterData) => {
     try {
       const res = await api.post("/auth/register", data);
-      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("token", res.data.token); // ✅ Now works!
       toast.success("Registered!");
       navigate("/dashboard");
     } catch (error) {

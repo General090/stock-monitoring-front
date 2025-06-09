@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 type LoginData = {
-  email: string;
+  username: string;
   password: string;
 };
 
@@ -14,7 +14,7 @@ export default function Login() {
 
   const onSubmit = async (data: LoginData) => {
     try {
-      const res = await api.post("/auth/login", data);
+      const res = await api.post("/login", data);
       localStorage.setItem("token", res.data.token);
       toast.success("Logged in");
       navigate("/dashboard");
@@ -26,7 +26,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <input {...register("email")} placeholder="Email" className="border p-2 block" />
+        <input {...register("username")} placeholder="Username" className="border p-2 block" />
         <input {...register("password")} type="password" placeholder="Password" className="border p-2 block" />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 cursor-pointer">Login</button>
       </form>
