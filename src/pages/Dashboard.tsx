@@ -31,7 +31,7 @@ export default function Dashboard() {
         const statsRes = await api.get("/dashboard/stats");
         setStats(statsRes.data);
 
-        const transactionsRes = await api.get("/api/transactions/recent");
+        const transactionsRes = await api.get("/transactions/recent");
         setTransactions(transactionsRes.data);
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);

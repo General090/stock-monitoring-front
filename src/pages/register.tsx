@@ -16,7 +16,7 @@ export default function Register() {
   const onSubmit = async (data: RegisterData) => {
     try {
       const res = await api.post("/auth/register", data);
-      localStorage.setItem("token", res.data.token); // ✅ Now works!
+      localStorage.setItem("token", res.data.token);
       toast.success("Registered!");
       navigate("/dashboard");
     } catch (error) {
