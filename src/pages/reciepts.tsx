@@ -56,10 +56,17 @@ export default function Receipts() {
   const handleGeneratePDF = async () => {
     const element = document.getElementById("receipt-preview");
     if (!element) return;
+  
     const canvas = await html2canvas(element);
     const imgData = canvas.toDataURL("image/png");
+  
     const pdf = new jsPDF();
-    pdf.addImage(imgData, "PNG", 10, 10);
+  
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
     pdf.save("receipt.pdf");
   };
 
