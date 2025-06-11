@@ -27,35 +27,47 @@ export default function LowStockPage() {
 
   return (
     <AdminLayout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Low Stock Products</h1>
+      <div className="p-6 bg-gray-50 min-h-screen rounded-md shadow-md">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-8 border-b pb-2">
+          Low Stock Products
+        </h1>
 
-        <table className="table-auto w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Quantity</th>
-              <th className="border p-2">Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.length === 0 ? (
+        <div className="overflow-x-auto bg-white shadow rounded-lg">
+          <table className="min-w-full table-auto border-collapse">
+            <thead className="bg-blue-100 text-gray-700">
               <tr>
-                <td colSpan={3} className="text-center p-4">
-                  All stock levels are sufficient.
-                </td>
+                <th className="text-left px-6 py-3 border-b">Product Name</th>
+                <th className="text-left px-6 py-3 border-b">Quantity</th>
+                <th className="text-left px-6 py-3 border-b">Price</th>
               </tr>
-            ) : (
-              products.map((product) => (
-                <tr key={product._id}>
-                  <td className="border p-2">{product.name}</td>
-                  <td className="border p-2">{product.quantity}</td>
-                  <td className="border p-2">₦{product.price.toFixed(2)}</td>
+            </thead>
+            <tbody>
+              {products.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={3}
+                    className="text-center text-gray-500 py-6 px-4"
+                  >
+                    All stock levels are sufficient.
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                products.map((product) => (
+                  <tr
+                    key={product._id}
+                    className="bg-red-50 hover:bg-red-100 transition duration-200"
+                  >
+                    <td className="px-6 py-4 border-b">{product.name}</td>
+                    <td className="px-6 py-4 border-b">{product.quantity}</td>
+                    <td className="px-6 py-4 border-b">
+                      ₦{product.price.toFixed(2)}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </AdminLayout>
   );
