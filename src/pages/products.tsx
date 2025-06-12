@@ -13,6 +13,7 @@ export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
   const [form, setForm] = useState({ name: "", quantity: 0, price: 0 });
   const [editId, setEditId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchProducts();
@@ -74,59 +75,63 @@ export default function ProductManagement() {
     });
   }
 
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <AdminLayout>
-      <div className="p-6 bg-gray-50 min-h-screen">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Product Management</h1>
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold mb-6">Inventory Management</h1>
 
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 mb-8 space-y-4 max-w-md">
-          <div>
-            <label className="block text-gray-600 mb-1">Product Name</label>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-2">
             <input
-              name="name"
               type="text"
-              placeholder="Product Name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Search product..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="input input-bordered w-full"
             />
           </div>
+        </div>
 
-          <div>
-            <label className="block text-gray-600 mb-1">Quantity</label>
-            <input
-              name="quantity"
-              type="number"
-              placeholder="Quantity"
-              value={form.quantity}
-              onChange={handleChange}
-              min={0}
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-600 mb-1">Price (₦)</label>
-            <input
-              name="price"
-              type="number"
-              placeholder="Price"
-              value={form.price}
-              onChange={handleChange}
-              min={0}
-              step="1"
-              required
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700 transition"
-            >
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white shadow-md rounded p-4 mb-6 max-w-md space-y-4"
+        >
+          <input
+            name="name"
+            type="text"
+            placeholder="Product Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="input input-bordered w-full"
+          />
+          <input
+            name="quantity"
+            type="number"
+            placeholder="Quantity"
+            value={form.quantity}
+            onChange={handleChange}
+            min={0}
+            required
+            className="input input-bordered w-full"
+          />
+          <input
+            name="price"
+            type="number"
+            placeholder="Price"
+            value={form.price}
+            onChange={handleChange}
+            min={0}
+            step="1"
+            required
+            className="input input-bordered w-full"
+          />
+          <div className="flex gap-3">
+            <button type="submit" className="btn btn-primary w-full">
               {editId ? "Update Product" : "Add Product"}
             </button>
             {editId && (
@@ -136,7 +141,7 @@ export default function ProductManagement() {
                   setEditId(null);
                   setForm({ name: "", quantity: 0, price: 0 });
                 }}
-                className="bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500 transition"
+                className="btn btn-secondary"
               >
                 Cancel
               </button>
@@ -144,48 +149,49 @@ export default function ProductManagement() {
           </div>
         </form>
 
-        <div className="overflow-x-auto bg-white shadow-md rounded-lg">
-          <table className="min-w-full text-sm text-left">
-            <thead className="bg-gray-100 text-gray-700">
+        <div className="overflow-x-auto">
+          <table className="table w-full border border-gray-300">
+            <thead>
               <tr>
-                <th className="px-4 py-2 border">Name</th>
-                <th className="px-4 py-2 border">Quantity</th>
-                <th className="px-4 py-2 border">Price</th>
-                <th className="px-4 py-2 border">Actions</th>
+                <th className="border p-2">Name</th>
+                <th className="border p-2">Quantity</th>
+                <th className="border p-2">Price</th>
+                <th className="border p-2">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {products.length === 0 && (
+              {filteredProducts.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="text-center p-4">
                     No products found.
                   </td>
                 </tr>
+              ) : (
+                filteredProducts.map((product) => (
+                  <tr
+                    key={product._id}
+                    className={product.quantity < 5 ? "bg-red-100" : ""}
+                  >
+                    <td className="border p-2">{product.name}</td>
+                    <td className="border p-2">{product.quantity}</td>
+                    <td className="border p-2">₦{product.price.toFixed(2)}</td>
+                    <td className="border p-2 space-x-2">
+                      <button
+                        onClick={() => startEdit(product)}
+                        className="btn btn-sm btn-warning"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product._id)}
+                        className="btn btn-sm btn-error"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
-              {products.map((product) => (
-                <tr
-                  key={product._id}
-                  className={product.quantity < 5 ? "bg-red-100" : "hover:bg-gray-50"}
-                >
-                  <td className="px-4 py-2 border">{product.name}</td>
-                  <td className="px-4 py-2 border">{product.quantity}</td>
-                  <td className="px-4 py-2 border">₦{product.price.toFixed(2)}</td>
-                  <td className="px-4 py-2 border space-x-2">
-                    <button
-                      onClick={() => startEdit(product)}
-                      className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-sm"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>

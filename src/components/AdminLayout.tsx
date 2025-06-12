@@ -15,10 +15,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <h2 className="text-xl font-bold">Admin</h2>
         <nav className="space-y-2">
           <Link to="/dashboard" className="block hover:underline">Dashboard</Link>
-          <Link to="/products" className="block hover:underline">Products</Link>
-          <Link to="/low-stock" className="block py-2 hover:underline">Low Stock</Link>
-          <Link to="/receipts" className="block hover:underline">Receipts</Link>
-          <button onClick={handleLogout} className="block text-red-400 hover:underline mt-4 cursor-pointer">Logout</button>
+          <Link to="/products" className="block pt-2 hover:underline">Products</Link>
+          <Link to="/low-stock" className="block pt-2 hover:underline">Low Stock</Link>
+          <Link to="/report" className="block pt-2 hover:underline">Report</Link>
+          <Link to="/receipts" className="block pt-2 hover:underline">Receipts</Link>
+          <button onClick={handleLogout} className="block text-red-400 pt-2 hover:underline mt-4 cursor-pointer">Logout</button>
         </nav>
       </aside>
 

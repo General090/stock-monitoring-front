@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import api from "../services/api";
+import { toast } from "react-toastify";
 
 interface Product {
   _id: string;
@@ -20,6 +21,14 @@ export default function LowStockPage() {
     try {
       const res = await api.get("/products/low-stock");
       setProducts(res.data);
+
+      if (res.data.length > 0) {
+        const lowStockNames = res.data.map((p: Product) => p.name).join(", ");
+        toast.warn(`⚠️ Low stock on: ${lowStockNames}`, {
+          autoClose: 8000,
+          position: "top-right",
+        });
+      }
     } catch (error) {
       console.error("Failed to fetch low stock items", error);
     }
@@ -31,6 +40,16 @@ export default function LowStockPage() {
         <h1 className="text-3xl font-semibold text-gray-800 mb-8 border-b pb-2">
           Low Stock Products
         </h1>
+
+        {/* Banner Notification */}
+        {products.length > 0 && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-md mb-6">
+            ⚠️ The following products are low in stock:{" "}
+            <span className="font-medium">
+              {products.map((p) => p.name).join(", ")}
+            </span>
+          </div>
+        )}
 
         <div className="overflow-x-auto bg-white shadow rounded-lg">
           <table className="min-w-full table-auto border-collapse">

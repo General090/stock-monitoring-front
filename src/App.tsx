@@ -9,7 +9,9 @@ import Register from "./pages/register";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/products";
 import LowStockPage from "./pages/LowStockPage";
+import StockReportPage from "./pages/StockReportPage";
 import Receipts from "./pages/reciepts";
+
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/products" element={<Products />} />
         <Route path="/low-stock" element={<LowStockPage />} />
+        <Route path="/report" element={<StockReportPage />} />
         <Route path="/receipts" element={<Receipts />} />
       </Routes>
     </Router>

@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import api from "../services/api";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 
 type LoginData = {
   email: string;
@@ -11,8 +12,10 @@ type LoginData = {
 export default function Login() {
   const { register, handleSubmit } = useForm<LoginData>();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: LoginData) => {
+    setLoading(true);
     try {
       const res = await api.post("/auth/login", data);
       localStorage.setItem("token", res.data.token);
@@ -20,12 +23,13 @@ export default function Login() {
       navigate("/dashboard");
     } catch (error) {
       toast.error("Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-blue-50">
-      {/* Navbar */}
       <nav className="bg-white shadow-md p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-700">StockEase</h1>
         <div className="space-x-4">
@@ -35,7 +39,6 @@ export default function Login() {
         </div>
       </nav>
 
-      {/* Login Form */}
       <div className="flex items-center justify-center h-[80vh]">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -48,7 +51,8 @@ export default function Login() {
             <input
               {...register("email")}
               placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              disabled={loading}
             />
           </div>
 
@@ -58,18 +62,21 @@ export default function Login() {
               {...register("password")}
               type="password"
               placeholder="Enter your password"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              disabled={loading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+            disabled={loading}
+            className={`w-full py-2 rounded transition text-white ${
+              loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-
       </div>
     </div>
   );

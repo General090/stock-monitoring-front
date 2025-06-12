@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import api from "../services/api";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 
 type RegisterData = {
   name: string;
@@ -12,8 +13,10 @@ type RegisterData = {
 export default function Register() {
   const { register, handleSubmit } = useForm<RegisterData>();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: RegisterData) => {
+    setLoading(true);
     try {
       const res = await api.post("/auth/register", data);
       localStorage.setItem("token", res.data.token);
@@ -21,12 +24,13 @@ export default function Register() {
       navigate("/dashboard");
     } catch (error) {
       toast.error("Registration failed!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-blue-50">
-      {/* Navbar */}
       <nav className="bg-white shadow-md p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-700">StockEase</h1>
         <div className="space-x-4">
@@ -36,7 +40,6 @@ export default function Register() {
         </div>
       </nav>
 
-      {/* Registration Form */}
       <div className="flex items-center justify-center h-[80vh]">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -49,7 +52,8 @@ export default function Register() {
             <input
               {...register("name")}
               placeholder="Enter your name"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              disabled={loading}
             />
           </div>
 
@@ -58,7 +62,8 @@ export default function Register() {
             <input
               {...register("email")}
               placeholder="Enter your email"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              disabled={loading}
             />
           </div>
 
@@ -68,15 +73,19 @@ export default function Register() {
               {...register("password")}
               type="password"
               placeholder="Enter a password"
-              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded px-3 py-2"
+              disabled={loading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+            disabled={loading}
+            className={`w-full py-2 rounded text-white transition ${
+              loading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+            }`}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>
