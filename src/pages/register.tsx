@@ -81,7 +81,7 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 rounded text-white transition ${
+            className={`w-full py-2 rounded text-white transition cursor-pointer ${
               loading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
             }`}
           >

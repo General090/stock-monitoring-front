@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import { Link } from "react-router-dom";
 import StockChart from "../components/StockChart";
+import { toast } from "react-toastify";
+
 
 interface Product {
   name: string;
@@ -58,6 +60,16 @@ export default function Dashboard() {
     
       fetchData();
     }, []);
+
+    useEffect(() => {
+      if (stats.lowStock > 0) {
+        toast.warn(`${stats.lowStock} product${stats.lowStock > 1 ? "s are" : " is"} low in stock!`, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    }, [stats.lowStock]);
+    
 
   return (
     <AdminLayout>

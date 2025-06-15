@@ -70,7 +70,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 rounded transition text-white ${
+            className={`w-full py-2 rounded transition text-white cursor-pointer ${
               loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
             }`}
           >

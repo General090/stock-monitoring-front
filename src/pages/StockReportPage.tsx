@@ -1,4 +1,3 @@
-// src/components/StockSummary.tsx
 import { useEffect, useState } from "react";
 import AdminLayout from "../components/AdminLayout";
 import {
@@ -42,6 +41,8 @@ export default function StockSummary() {
 
     fetchSummary();
   }, []);
+
+  
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);

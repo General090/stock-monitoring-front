@@ -24,7 +24,7 @@ export default function LowStockPage() {
 
       if (res.data.length > 0) {
         const lowStockNames = res.data.map((p: Product) => p.name).join(", ");
-        toast.warn(`⚠️ Low stock on: ${lowStockNames}`, {
+        toast.warn(`Low stock on: ${lowStockNames}`, {
           autoClose: 8000,
           position: "top-right",
         });

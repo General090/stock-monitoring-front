@@ -13,10 +13,10 @@ import StockReportPage from "./pages/StockReportPage";
 import Receipts from "./pages/reciepts";
 
 
+
 function App() {
   return (
     <Router>
-      <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -27,6 +27,8 @@ function App() {
         <Route path="/report" element={<StockReportPage />} />
         <Route path="/receipts" element={<Receipts />} />
       </Routes>
+
+      <ToastContainer />
     </Router>
   );
 }
